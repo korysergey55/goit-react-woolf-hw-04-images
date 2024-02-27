@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify'
 
-const handleSearchProducts = async ({ searchWord, currentPage }) => {
+const searchProductsAPI = async (searchWord, currentPage) => {
   const KEY_API = "21698474-fb36d7b3400c91ab3d227d6db";
   const BASE_URL = "https://pixabay.com/api/";
 
@@ -30,4 +30,4 @@ const handleSearchProducts = async ({ searchWord, currentPage }) => {
     });
   }
 }
-export default handleSearchProducts
+export default searchProductsAPI

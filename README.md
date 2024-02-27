@@ -2,6 +2,8 @@ Image searcher App
 
 Task- Write an image search application by keyword.
 
+- Rebuild aplication using React Huks
+
 - Register and get a private access key. For HTTP requests, use the public image
   search service Pixabay. The URL string of the HTTP request:
   'https://pixabay.com/api/?q=cat&page=1&key=your_key&image_type=photo&orientation=horizontal&per_page=12'

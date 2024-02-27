@@ -1,58 +1,61 @@
-import React, { Component } from 'react';
-import styles from './styles.module.css'
-import sprite from '../../icons/sprite.svg'
+import { useState } from 'react';
 import { toast } from 'react-toastify'
 
-class Searchbar extends Component {
-  state = {
-    searchWord: ''
+import styles from './styles.module.css'
+import sprite from '../../icons/sprite.svg'
+import image from '../../images/pixabay.jpg'
+
+const Searchbar = ({ handleChangeWord }) => {
+  const [state, setState] = useState('')
+
+  const handleChange = (evt) => {
+    setState(evt.target.value)
   }
 
-  handleChange = (evt) => {
-    this.setState({ [evt.target.name]: evt.target.value })
-  }
-
-  handaleSubmit = (evt) => {
+  const handaleSubmit = (evt) => {
     evt.preventDefault();
-
-    if (this.state.searchWord === '') {
+    if (state === '') {
       toast.error(`Field can't be empty. Please enter somsing...`, {
         theme: 'colored',
       })
       return
     }
 
-    if (this.state.searchWord === ' ') {
+    if (state === ' ' || state === '  ') {
       toast.error(`Field can't be an empty string.`, {
         theme: 'colored',
       })
-      this.setState({ searchWord: '' })
+      setState('')
       return
     }
-    this.props.handleChangeWord(this.state.searchWord)
+    handleChangeWord(state)
   }
-  render() {
-    return (
-      <header className={styles.searchbar} >
-        <form className={styles.form} onSubmit={this.handaleSubmit}>
-          <button type="submit" className={styles.button}>
-            <svg className={styles.icon} width="24" height="24" aria-label="icon-search">
-              <use href={sprite + '#icon-park-search'}></use>
-            </svg>
-          </button>
 
-          <input
-            className={styles.input}
-            name='searchWord'
-            value={this.state.searchWord}
-            type="text"
-            placeholder="Search images and photos"
-            onChange={this.handleChange}
-          />
-        </form>
-      </header>
-    );
-  }
+  return (
+    <header className={styles.searchbar} >
+      <img
+        className={styles.image}
+        src={image}
+        alt='logo' />
+      <form className={styles.form} onSubmit={handaleSubmit}>
+        <button type="submit" className={styles.button}>
+          <svg className={styles.icon} width="24" height="24" aria-label="icon-search">
+            <use href={sprite + '#icon-park-search'}></use>
+          </svg>
+        </button>
+
+        <input
+          className={styles.input}
+          name='searchWord'
+          value={state}
+          type="text"
+          placeholder="Search images and photos"
+          onChange={handleChange}
+        />
+      </form>
+    </header>
+  );
 }
+
 
 export default Searchbar;

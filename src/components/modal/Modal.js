@@ -1,15 +1,15 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import styles from './styles.module.css'
 
 const Modal = ({ largeImageURL, taggleModal }) => {
 
-  const handleEsc = useCallback((evt) => {
-    if (evt.code === "Escape") {
-      taggleModal('');
-    }
-  }, [taggleModal])
-
   useEffect(() => {
+    const handleEsc = (evt) => {
+      if (evt.code === "Escape") {
+        taggleModal('');
+      }
+    }
+
     window.addEventListener("keydown", handleEsc);
     document.body.style.overflow = "hidden";
 
@@ -17,7 +17,7 @@ const Modal = ({ largeImageURL, taggleModal }) => {
       window.removeEventListener("keydown", handleEsc);
       document.body.style.overflow = "auto";
     }
-  }, [handleEsc])
+  }, [taggleModal])
 
   const handleClick = (evt) => {
     if (evt.target === evt.currentTarget) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './styles.module.css'
 import { ToastContainer } from 'react-toastify'
 
@@ -9,76 +9,70 @@ import Modal from 'components/modal/Modal';
 import Button from 'components/button/Button';
 import searchProductsAPI from 'api/api';
 
-const INITIAL_STATE = {
-  images: [],
-  searchWord: "",
-  currentPage: 0,
-  loading: false,
-  largeImageURL: "",
-  shawModal: false,
-  isLoadMore: 0
-}
-
 const App = () => {
-
-  const [state, setState] = useState(INITIAL_STATE)
-
-  const fetchData = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true }));
-    try {
-      const { data } = await searchProductsAPI(state.searchWord, state.currentPage)
-      document.body.style.backgroundImage = 'none'
-      setState((prev) => ({
-        ...prev,
-        images: [...prev.images, ...data.hits],
-        isLoadMore: data.hits.length,
-        loading: false
-      }))
-    }
-    catch (error) {
-      console.log(error.message)
-    }
-    finally {
-      setState((prev) => ({ ...prev, loading: false }));
-    }
-  }, [state.searchWord, state.currentPage])
+  const [images, setImages] = useState([])
+  const [searchWord, setSearchWord] = useState('')
+  const [currentPage, setCurrentPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [largeImageURL, setLargeImageURL] = useState('')
+  const [isLoadMore, setisLoadMore] = useState(0)
 
   useEffect(() => {
-    if (state.searchWord) {
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { data } = await searchProductsAPI(searchWord, currentPage)
+        setImages((prev) => ([...prev, ...data.hits]))
+        setisLoadMore(data.hits.length)
+        setLoading(false);
+        document.body.style.backgroundImage = 'none'
+      }
+      catch (error) {
+        console.log(error.message)
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+
+    if (searchWord) {
       fetchData()
     }
-  }, [state.searchWord, state.currentPage, fetchData])
+  }, [searchWord, currentPage])
 
 
   const handleChangeWord = (data) => {
-    if (data === state.searchWord) return
-    setState((prev) => ({ ...prev, searchWord: data, images: [], currentPage: 1, }))
+    if (data === searchWord) return
+    setSearchWord(data)
+    setImages([])
+    setCurrentPage(1)
   }
 
   const taggleModal = (bigImage) => {
-    setState((prev) => ({ ...prev, largeImageURL: bigImage }));
+    setLargeImageURL(bigImage)
   };
 
   const showMore = () => {
-    setState((prevState) => ({ ...prevState, currentPage: prevState.currentPage + 1 }));
+    setCurrentPage((prev) => (prev + 1));
   };
 
   return (
     <div className={styles.container} >
       <Searchbar handleChangeWord={handleChangeWord} />
 
-      {state.images && <ImageGallery images={state.images} taggleModal={taggleModal} />}
+      {images && <ImageGallery images={images} taggleModal={taggleModal} />}
 
-      {state.loading && <Loader />}
+      {loading && <Loader />}
 
-      {state.largeImageURL && (
+      {largeImageURL && (
         <Modal
-          largeImageURL={state.largeImageURL}
+          largeImageURL={largeImageURL}
           taggleModal={taggleModal}
         />
       )}
 
-      {state.isLoadMore > 11 && !state.loading && <Button showMore={showMore} />}
+      {isLoadMore > 11 && !loading && <Button showMore={showMore} />}
 
       <ToastContainer />
     </div>

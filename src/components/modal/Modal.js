@@ -1,42 +1,42 @@
-import React, { Component } from "react";
+import React, { useEffect, useCallback } from "react";
 import styles from './styles.module.css'
 
-class Modal extends Component {
+const Modal = ({ largeImageURL, taggleModal }) => {
 
-  componentDidMount() {
-    window.addEventListener("keydown", this.handleEsc);
-    document.body.style.overflow = "hidden";
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.handleEsc);
-    document.body.style.overflow = "auto";
-  }
-
-  handleEsc = (evt) => {
+  const handleEsc = useCallback((evt) => {
     if (evt.code === "Escape") {
-      this.props.taggleModal('');
+      taggleModal('');
     }
-  }
+  }, [taggleModal])
 
-  handleClick = (evt) => {
+  useEffect(() => {
+    window.addEventListener("keydown", handleEsc);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "auto";
+    }
+  }, [handleEsc])
+
+  const handleClick = (evt) => {
     if (evt.target === evt.currentTarget) {
-      this.props.taggleModal('')
+      taggleModal('')
     }
   }
 
-  render() {
-    return (
-      <div className={styles.overlay} onClick={this.handleClick}>
-        <div className={styles.modal}>
-          <img
-            className={styles.image}
-            src={this.props.largeImageURL}
-            alt="random" />
-        </div>
+
+  return (
+    <div className={styles.overlay} onClick={handleClick}>
+      <div className={styles.modal}>
+        <img
+          className={styles.image}
+          src={largeImageURL}
+          alt="random" />
       </div>
-    );
-  }
+    </div>
+  );
 }
+
 
 export default Modal;
